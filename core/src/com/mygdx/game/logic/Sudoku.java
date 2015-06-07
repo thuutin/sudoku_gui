@@ -3,6 +3,7 @@ package com.mygdx.game.logic;
 import aima.core.search.csp.Assignment;
 import aima.core.search.csp.Constraint;
 import aima.core.search.csp.Variable;
+import com.mygdx.game.utils.Utils;
 import com.sun.deploy.util.ArrayUtil;
 
 import java.lang.reflect.Array;
@@ -20,17 +21,23 @@ public class Sudoku {
 
     public Sudoku(){
         //int[] a = {2, 0, 7, 0, 0, 0, 5, 0, 1};
-        cells[0] = new NineNumber(0, new int[] {2, 3, 7, 0, 0, 0, 5, 0, 1});
-        cells[1] = new NineNumber(1, new int[] {5, 1, 0, 0, 0, 8, 0, 0, 0});
-        cells[2] = new NineNumber(2, new int[] {0,0,0,0,2,0,6,0,0});
+        int[][] def = Utils.getSudokuInstance();
+        for (int i = 0; i< 9; i++){
+            cells[i] = new NineNumber(i, def[i]);
+        }
 
-        cells[3] = new NineNumber(3, new int[] {0,0,0,0,0,0,0,0,5});
-        cells[4] = new NineNumber(4, new int[] {0,0,0,0,0,0,0,0,0});
-        cells[5] = new NineNumber(5, new int[] {4,0,0,0,0,0,0,0,0});
-
-        cells[6] = new NineNumber(6, new int[] {0,0,3,0,5,0,0,0,0});
-        cells[7] = new NineNumber(7, new int[] {0,0,0,4,0,0,0,6,5});
-        cells[8] = new NineNumber(8, new int[] {7,0,6,0,0,0,9,0,8});
+        // dont need any more
+//        cells[0] = new NineNumber(0, new int[] {2, 3, 7, 0, 0, 0, 5, 0, 1});
+//        cells[1] = new NineNumber(1, new int[] {5, 1, 0, 0, 0, 8, 0, 0, 0});
+//        cells[2] = new NineNumber(2, new int[] {0,0,0,0,2,0,6,0,0});
+//
+//        cells[3] = new NineNumber(3, new int[] {0,0,0,0,0,0,0,0,5});
+//        cells[4] = new NineNumber(4, new int[] {0,0,0,0,0,0,0,0,0});
+//        cells[5] = new NineNumber(5, new int[] {4,0,0,0,0,0,0,0,0});
+//
+//        cells[6] = new NineNumber(6, new int[] {0,0,3,0,5,0,0,0,0});
+//        cells[7] = new NineNumber(7, new int[] {0,0,0,4,0,0,0,6,5});
+//        cells[8] = new NineNumber(8, new int[] {7,0,6,0,0,0,9,0,8});
     }
 
     public Sudoku(NineNumber[] cells){
@@ -69,7 +76,7 @@ public class Sudoku {
     }
 
     public List<Variable> getVariables(){
-        List<Variable> variables = new ArrayList<Variable>();
+        List<Variable> variables = new ArrayList<>();
         for (NineNumber c : cells){
             variables.addAll(c.getVariables());
         }

@@ -19,12 +19,23 @@ import com.mygdx.game.logic.Sudoku;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.concurrent.BlockingQueue;
+import java.util.concurrent.LinkedBlockingDeque;
+import java.util.concurrent.locks.ReentrantLock;
 
 public class MyGdxGame extends ApplicationAdapter {
+
+
+	public static long INTERVAL = 1000;
+
 
 	public final static int BOARD_SIZE = 600;
 	public final static int CELL_SIZE = BOARD_SIZE/3;
 	public final static int NUMBER_SIZE = BOARD_SIZE/9;
+
+	public static boolean stop  = true;
+	public static BlockingQueue<Message> queue = new LinkedBlockingDeque<>();
+	public static final ReentrantLock reentrantLock = new ReentrantLock();
 
 	private Stage stage;
 	private Skin skin;
@@ -41,7 +52,6 @@ public class MyGdxGame extends ApplicationAdapter {
 		table.setSize(BOARD_SIZE, BOARD_SIZE);
 		table.setDebug(true);
 		stage.addActor(table);
-
 		new Thread(new Runnable() {
 			@Override
 			public void run() {
@@ -69,7 +79,7 @@ public class MyGdxGame extends ApplicationAdapter {
 		final Sudoku sudoku = new Sudoku();
 		final Constraint constraint = new MyConstraints(sudoku);
 		((MyConstraints) constraint).setUIClient(client);
-		//final BacktrackingStrategy bs = new BacktrackingStrategy();
+//		final BacktrackingStrategy bs = new BacktrackingStrategy();
 		final ImprovedBacktrackingStrategy bs = new ImprovedBacktrackingStrategy(true, false, false, false);
 
 		List<Variable> variableList = sudoku.getVariables();
@@ -79,7 +89,7 @@ public class MyGdxGame extends ApplicationAdapter {
 			ArrayList<Object> arrayList = new ArrayList<Object>(0);
 			for(int value = 0; value < 10; value++) {
 				if (check(sudoku, v, value) ){
-					arrayList.add(value);
+					arrayList.add(new Integer(value));
 				}
 			}
 			Domain domain = new Domain(arrayList);
@@ -113,7 +123,10 @@ public class MyGdxGame extends ApplicationAdapter {
 			return false;
 		}
 		return true;
+
 	}
+
+
 
 }
 

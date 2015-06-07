@@ -2,11 +2,16 @@ package com.mygdx.game;
 
 import aima.core.search.csp.Assignment;
 import aima.core.search.csp.Variable;
+import com.badlogic.gdx.scenes.scene2d.Event;
+import com.badlogic.gdx.scenes.scene2d.EventListener;
 import com.badlogic.gdx.scenes.scene2d.ui.Skin;
 import com.badlogic.gdx.scenes.scene2d.ui.Table;
 import com.mygdx.game.logic.MyConstraints;
+import com.mygdx.game.utils.Utils;
+import sun.text.normalizer.UTF16;
 
 import java.util.List;
+import java.util.concurrent.BlockingQueue;
 
 /**
  * Created by tin on 6/6/15.
@@ -30,32 +35,59 @@ public class Board extends Table implements MyConstraints.OnAssignmentChange {
                     .size(MyGdxGame.CELL_SIZE, MyGdxGame.CELL_SIZE);
             if (i %3 == 2) row();
         }
+        addListener(new EventListener() {
+            @Override
+            public boolean handle(Event event) {
+
+                if (event instanceof OnBoardChange) {
+                    OnBoardChange e = (OnBoardChange) event;
+                    int[][] ints = e.getInts();
+                    fireCellsEvent(ints);
+                    return true;
+                }
+                return false;
+            }
+        });
+    }
+
+    public void fireCellsEvent(int[][] ints) {
+        for(int i = 0; i < 9; i++){
+            cells[i].fire(new InnerTable.OnCellChange(ints[i]));
+        }
     }
 
     @Override
-    public void performUIUpdate(Assignment assignment) {
-        if (mCurrentAssignment == null)
-            for (MyConstraints.OnAssignmentChange mInterface : cells)
-                mInterface.performUIUpdate(assignment);
-        else {
-            //int[] change = compareAssignment(assignment, mCurrentAssignment);
-        }
-        //mCurrentAssignment = assignment;
+    public void performUIUpdate(Assignment ass){
+        int[][] def = Utils.convertAssignmentToIntArray(ass);
+        this.fire(new OnBoardChange(def));
     }
 
-    private int[] compareAssignment(Assignment a1, Assignment a2){
-        if (a1.getVariables().size() < a2.getVariables().size())
-            return compareAssignment(a2, a1);
+    @Override
+    public void act(float delta) {
 
-        for (int i = 0; i < a1.getVariables().size(); i++){
-            Variable v1 = a1.getVariables().get(i);
-            Variable v2 = a2.getVariables().get(i);
-            if (v1.getName().equals(v2)){
-                System.out.println(String.format("true"));
-            }
+            //MyGdxGame.check = false;
+        BlockingQueue queue = MyGdxGame.queue;
+        Message msg;
+        while ((msg = (Message) queue.poll()) != null) {
+            performUIUpdate(msg.getMsg());
         }
-        return null;
+        synchronized (MyGdxGame.reentrantLock){
+            MyGdxGame.stop = false;
+        }
+        super.act(delta);
+    }
 
+    public static class OnBoardChange extends Event{
+
+        private int[][] ints;
+
+        public OnBoardChange(int[][] ints){
+            this.ints = ints;
+        }
+
+        public int[][] getInts(){
+            return ints;
+        }
     }
 
 

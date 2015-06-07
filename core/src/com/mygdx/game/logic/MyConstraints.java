@@ -3,6 +3,8 @@ package com.mygdx.game.logic;
 import aima.core.search.csp.Assignment;
 import aima.core.search.csp.Constraint;
 import aima.core.search.csp.Variable;
+import com.mygdx.game.Message;
+import com.mygdx.game.MyGdxGame;
 
 import java.lang.reflect.Array;
 import java.util.ArrayList;
@@ -15,7 +17,6 @@ import java.util.List;
 public class MyConstraints implements Constraint {
     private int num = 61;
     private Sudoku sudoku;
-    private static Assignment ass;
 
     private OnAssignmentChange mUIclient;
 
@@ -37,9 +38,7 @@ public class MyConstraints implements Constraint {
         //Sudoku s = copySudoku();
         try {
             sudoku.reset();
-            Sudoku s = sudoku;
             return applyAssignment(assignment);
-
         } catch (InterruptedException e){
             e.printStackTrace();
 
@@ -50,11 +49,14 @@ public class MyConstraints implements Constraint {
 
     private boolean applyAssignment (Assignment assignment) throws InterruptedException{
 
-        if (ass == null)
-            ass = assignment;
-
-        mUIclient.performUIUpdate(assignment);
-
+        long i = Thread.currentThread().getId();
+        MyGdxGame.queue.put(new Message(assignment));
+        synchronized (MyGdxGame.reentrantLock){
+            MyGdxGame.stop = true;
+        }
+        while(MyGdxGame.stop){
+            Thread.currentThread().sleep(MyGdxGame.INTERVAL);
+        }
         List<Variable> variables = assignment.getVariables();
         Hashtable<Integer, ArrayList<Integer>> columns = new Hashtable<Integer, ArrayList<Integer>>(0);
         Hashtable<Integer, ArrayList<Integer>> rows = new Hashtable<Integer, ArrayList<Integer>>(0);
@@ -131,11 +133,7 @@ public class MyConstraints implements Constraint {
 //            }
 
         }
-//        int i = s.getNum();
-//        if (i < num){
-//            num = i;
-//            System.out.println(s);
-//        }
+
         return true;
     }
 
