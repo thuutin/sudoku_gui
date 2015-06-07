@@ -18,13 +18,8 @@ import java.util.concurrent.BlockingQueue;
 public class Board extends Table {
 
     InnerTable[] cells = new InnerTable[9];
-    Assignment mCurrentAssignment = null;
 
-    public Board(Skin skin) {
-        this(skin, null);
-    }
-
-    public Board(Skin skin, Assignment assignment){
+    public Board(Skin skin){
         super(skin);
 
         //this.mCurrentAssignment = assignment;
