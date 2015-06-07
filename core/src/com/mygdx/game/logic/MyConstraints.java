@@ -15,17 +15,11 @@ import java.util.List;
  * Created by tin on 4/17/15.
  */
 public class MyConstraints implements Constraint {
-    private int num = 61;
-    private Sudoku sudoku;
 
-    private OnAssignmentChange mUIclient;
+    private Sudoku sudoku;
 
     public MyConstraints(Sudoku sudoku) {
         this.sudoku = sudoku;
-    }
-
-    public void setUIClient(OnAssignmentChange client){
-        this.mUIclient = client;
     }
 
     @Override
@@ -55,7 +49,7 @@ public class MyConstraints implements Constraint {
             MyGdxGame.stop = true;
         }
         while(MyGdxGame.stop){
-            Thread.currentThread().sleep(MyGdxGame.INTERVAL);
+            Thread.currentThread().sleep(0, 1);//MyGdxGame.INTERVAL);
         }
         List<Variable> variables = assignment.getVariables();
         Hashtable<Integer, ArrayList<Integer>> columns = new Hashtable<Integer, ArrayList<Integer>>(0);
@@ -168,9 +162,5 @@ public class MyConstraints implements Constraint {
             newCells[c.getIndex()] = new NineNumber(c.getIndex(), newNums);
         }
         return new Sudoku(newCells);
-    }
-
-    public interface OnAssignmentChange {
-        void performUIUpdate(Assignment assignment);
     }
 }

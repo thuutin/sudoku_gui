@@ -55,7 +55,7 @@ public class MyGdxGame extends ApplicationAdapter {
 		new Thread(new Runnable() {
 			@Override
 			public void run() {
-				setUpAIAgent((Board) table);
+				setUpAIAgent();
 			}
 		}).start();
 		//stage.addActor(new ImageButton(skin));
@@ -75,10 +75,9 @@ public class MyGdxGame extends ApplicationAdapter {
 		stage.dispose();
 	}
 
-	private void setUpAIAgent(MyConstraints.OnAssignmentChange client){
+	private void setUpAIAgent(){
 		final Sudoku sudoku = new Sudoku();
 		final Constraint constraint = new MyConstraints(sudoku);
-		((MyConstraints) constraint).setUIClient(client);
 //		final BacktrackingStrategy bs = new BacktrackingStrategy();
 		final ImprovedBacktrackingStrategy bs = new ImprovedBacktrackingStrategy(true, false, false, false);
 
@@ -86,8 +85,8 @@ public class MyGdxGame extends ApplicationAdapter {
 		CSP csp = new CSP(variableList);
 
 		for ( Variable v : variableList){
-			ArrayList<Object> arrayList = new ArrayList<Object>(0);
-			for(int value = 0; value < 10; value++) {
+			ArrayList<Integer> arrayList = new ArrayList<Integer>(0);
+			for(int value = 1; value < 10; value++) {
 				if (check(sudoku, v, value) ){
 					arrayList.add(new Integer(value));
 				}

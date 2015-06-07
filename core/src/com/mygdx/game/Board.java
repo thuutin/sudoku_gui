@@ -6,7 +6,6 @@ import com.badlogic.gdx.scenes.scene2d.Event;
 import com.badlogic.gdx.scenes.scene2d.EventListener;
 import com.badlogic.gdx.scenes.scene2d.ui.Skin;
 import com.badlogic.gdx.scenes.scene2d.ui.Table;
-import com.mygdx.game.logic.MyConstraints;
 import com.mygdx.game.utils.Utils;
 import sun.text.normalizer.UTF16;
 
@@ -16,7 +15,7 @@ import java.util.concurrent.BlockingQueue;
 /**
  * Created by tin on 6/6/15.
  */
-public class Board extends Table implements MyConstraints.OnAssignmentChange {
+public class Board extends Table {
 
     InnerTable[] cells = new InnerTable[9];
     Assignment mCurrentAssignment = null;
@@ -56,7 +55,6 @@ public class Board extends Table implements MyConstraints.OnAssignmentChange {
         }
     }
 
-    @Override
     public void performUIUpdate(Assignment ass){
         int[][] def = Utils.convertAssignmentToIntArray(ass);
         this.fire(new OnBoardChange(def));
